@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+openai
+anthropic
+httpx
+jinja2
+python-dotenv
+weasyprint
