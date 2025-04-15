@@ -6,3 +6,4 @@ httpx
 jinja2
 python-dotenv>=1.0.0
 weasyprint
+uvicorn[standard]
