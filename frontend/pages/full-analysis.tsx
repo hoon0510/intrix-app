@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withAuth } from '../utils/auth';
+import { withAuth } from '@/utils/auth';
 import CreditBanner from '../components/CreditBanner';
 
 interface AnalysisResult {
