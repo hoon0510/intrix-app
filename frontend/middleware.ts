@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export const runtime = 'experimental-edge';
+export const config = {
+  matcher: [
+    "/mypage/:path*",
+    "/analyze/:path*",
+    "/api/analyze/:path*",
+    "/api/mypage/:path*"
+  ]
+};
 
 export default function middleware(request: NextRequest) {
   const session = request.cookies.get("next-auth.session-token");
@@ -11,13 +18,4 @@ export default function middleware(request: NextRequest) {
   }
 
   return NextResponse.next();
-}
-
-export const config = {
-  matcher: [
-    "/mypage/:path*",
-    "/analyze/:path*",
-    "/api/analyze/:path*",
-    "/api/mypage/:path*"
-  ]
-}; 
+} 
