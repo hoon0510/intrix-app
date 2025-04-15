@@ -1,11 +1,10 @@
-import { withAuth } from "next-auth/middleware";
-
-export default withAuth({
-  pages: {
-    signIn: "/login",
-  },
-});
+export { default } from "next-auth/middleware"
 
 export const config = {
-  matcher: ["/", "/mypage", "/analyze"],
-}; 
+  matcher: [
+    "/mypage/:path*",
+    "/analyze/:path*",
+    "/api/analyze/:path*",
+    "/api/mypage/:path*"
+  ]
+} 
