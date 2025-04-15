@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState } from 'react';
-import { withAuth } from '../utils/auth';
+import { GetServerSideProps } from 'next';
+import { getSession } from 'next-auth/react';
 import CreditBanner from '../components/CreditBanner';
 
 interface AnalysisResult {
@@ -79,4 +82,21 @@ const FullAnalysisPage: React.FC = () => {
   );
 };
 
-export default withAuth(FullAnalysisPage); 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
+
+export default FullAnalysisPage; 

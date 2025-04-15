@@ -1,33 +1,30 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import type { ComponentType, FC } from "react";
+import type { ComponentType, PropsWithChildren } from "react";
 
-export function withAuth<P extends object>(Component: ComponentType<P>): FC<P> {
-  const WithAuthComponent: FC<P> = (props) => {
-    const { data: session, status } = useSession();
+export function withAuth<P extends object>(
+  WrappedComponent: ComponentType<P>
+): ComponentType<P> {
+  const WithAuthComponent = (props: P) => {
     const router = useRouter();
-
-    React.useEffect(() => {
-      if (status === "loading") return;
-      
-      if (!session) {
-        router.replace("/login");
-      }
-    }, [session, status, router]);
+    const { data: session, status } = useSession({
+      required: true,
+      onUnauthenticated() {
+        router.push("/login");
+      },
+    });
 
     if (status === "loading") {
       return <div>Loading...</div>;
     }
 
-    if (!session) {
-      return null;
-    }
-
-    return <Component {...props} />;
+    return <WrappedComponent {...props} />;
   };
 
-  WithAuthComponent.displayName = `withAuth(${Component.displayName || Component.name || "Component"})`;
+  WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return WithAuthComponent;
 }
