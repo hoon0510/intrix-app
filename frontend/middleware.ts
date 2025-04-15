@@ -14,8 +14,7 @@ export default function middleware(request: NextRequest) {
   const session = request.cookies.get("next-auth.session-token");
   
   if (!session) {
-    const url = new URL("/login", request.url);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
