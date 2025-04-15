@@ -2,8 +2,9 @@
 Main FastAPI Application
 """
 
-from fastapi import FastAPI, HTTPException, Header, Depends, Response
+from fastapi import FastAPI, HTTPException, Header, Depends, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
@@ -16,41 +17,51 @@ import time
 import json
 import logging
 
-from .services.analyzer_claude import Analyzer
-from .services.strategist import Strategist
-from .services.copywriter import Copywriter
-from .services.formatter_claude import Formatter
-from .services.credit_manager import CreditManager
-from .crawlers.dispatcher import CrawlerDispatcher
-from .utils.auth import verify_auth_token
-from .services.analysis_history import AnalysisHistory
+from api.services.analyzer_claude import Analyzer
+from api.services.strategist import Strategist
+from api.services.copywriter import Copywriter
+from api.services.formatter_claude import Formatter
+from api.services.credit_manager import CreditManager
+from api.crawlers.dispatcher import CrawlerDispatcher
+from api.utils.auth import verify_auth_token
+from api.services.analysis_history import AnalysisHistory
 from weasyprint import HTML
 from api.services.brand_strategy import BrandStrategyGenerator
-from .endpoints import analysis, strategy, copy, formatting, credit, crawl, download
-from .services.share_link_manager import (
-    create_share_link,
-    get_analysis_id_by_uuid,
-    get_user_id_by_uuid,
-    delete_share_link,
-    exists_share_link
-)
-from .services.favorite_manager import (
+from api.endpoints import analysis, strategy, copy, formatting, credit, download
+from api.routes import crawler, auth, share, feedback, history, favorite, export, execution, admin, credit_log
+from api.services.favorite_manager import (
     add_favorite,
     remove_favorite,
     get_favorites,
     is_favorited
 )
-from .services.zip_download_limiter import (
+from api.services.zip_download_limiter import (
     is_download_allowed,
     record_download_time,
     get_remaining_cooldown
 )
-from .services.feedback_manager import add_feedback, get_feedback_summary, submit_feedback
-from .services.scheduler_manager import schedule_analysis
-from .services.api_key_manager import generate_api_key, create_api_key, is_valid_api_key, get_user_by_api_key, get_api_key_by_user
+from api.services.feedback_manager import add_feedback, get_feedback_summary, submit_feedback
+from api.services.scheduler_manager import schedule_analysis
+from api.services.api_key_manager import generate_api_key, create_api_key, is_valid_api_key, get_user_by_api_key, get_api_key_by_user
+from api.services.gpt_caller import GPTCaller
+from api.services.claude_caller import ClaudeCaller
+from api.crawlers.reddit_scraper import RedditScraper
+from api.handlers.exception_handler import register_exception_handlers
+from api.middleware.logger import LoggingMiddleware
+from api.config.logging_config import configure_logging
+from api.db.database import engine
+from api.models import base
+from api.middleware.exception_handler import exception_handler
+from api.middleware.error_handler import global_error_handler
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
+
+# Environment variables with defaults
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+LOGIN_REQUIRED = os.getenv("LOGIN_REQUIRED", "false").lower() == "true"
+PORT = int(os.getenv("PORT", "8000"))
 
 # Mock data storage for analysis results
 mock_analysis_storage = {
@@ -131,14 +142,31 @@ crawler_dispatcher = CrawlerDispatcher()
 analysis_history = AnalysisHistory()
 brand_strategy_generator = BrandStrategyGenerator()
 
-# Create FastAPI app
+# 로그 디렉토리 생성
+log_dir = "logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+# 로깅 설정 적용
+logger = configure_logging()
+
+# 데이터베이스 테이블 생성
+base.Base.metadata.create_all(bind=engine)
+
+# FastAPI 앱 생성
 app = FastAPI(
     title="Intrix API",
-    description="Marketing Strategy Automation API",
+    description="API for Intrix Analysis Platform",
     version="1.0.0"
 )
 
-# Configure CORS
+# 예외 핸들러 등록
+register_exception_handlers(app)
+
+# 로깅 미들웨어 등록
+app.add_middleware(LoggingMiddleware)
+
+# CORS 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, replace with specific origins
@@ -147,14 +175,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(analysis.router)
-app.include_router(strategy.router)
-app.include_router(copy.router)
-app.include_router(formatting.router)
-app.include_router(credit.router)
-app.include_router(crawl.router)
-app.include_router(download.router)
+# 로그인 필수 미들웨어
+@app.middleware("http")
+async def check_login_required(request: Request, call_next):
+    # 로그인 필수 설정이 켜져있고, 인증이 필요한 경로인 경우
+    if LOGIN_REQUIRED and not request.url.path.startswith("/auth"):
+        # Authorization 헤더 확인
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    response = await call_next(request)
+    return response
+
+# 라우터 등록
+app.include_router(crawler.router, prefix="/api", tags=["crawler"])
+app.include_router(auth.router, prefix="/api", tags=["auth"])
+app.include_router(share.router, prefix="/api", tags=["share"])
+app.include_router(feedback.router, prefix="/api", tags=["feedback"])
+app.include_router(history.router, prefix="/api", tags=["history"])
+app.include_router(favorite.router, prefix="/api", tags=["favorite"])
+app.include_router(export.router, prefix="/api", tags=["export"])
+app.include_router(execution.router, prefix="/api", tags=["execution"])
+app.include_router(admin.router, prefix="/api", tags=["admin"])
+app.include_router(credit_log.router, prefix="/api", tags=["credit"])
 
 # Request models
 class AnalyzeRequest(BaseModel):
@@ -181,12 +225,6 @@ class FormatRequest(BaseModel):
 
 class CreditRequest(BaseModel):
     text: str
-    community_channels: List[str]
-    sns_channels: List[str]
-    user_id: str
-
-class CrawlRequest(BaseModel):
-    keyword: str
     community_channels: List[str]
     sns_channels: List[str]
     user_id: str
@@ -247,6 +285,14 @@ class ApiAccessStrategyResponse(BaseModel):
     copy: str
     style: str
     report_html: str
+
+class TestAnalysisRequest(BaseModel):
+    keyword: str
+
+class TestAnalysisResponse(BaseModel):
+    analysis: Dict[str, Any]
+    strategy: Dict[str, Any]
+    formatted: Dict[str, Any]
 
 # Rate limiting cache for ZIP downloads
 zip_download_cache: Dict[str, float] = {}
@@ -310,40 +356,6 @@ async def format_report(request: FormatRequest):
             return {"format": "html", "content": output}
         else:
             return {"format": "json", "content": result}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/credit")
-async def calculate_credit(request: CreditRequest):
-    """
-    Calculate required credits for a request
-    """
-    try:
-        result = credit_manager.process_request(
-            text=request.text,
-            community_channels=request.community_channels,
-            sns_channels=request.sns_channels,
-            user_id=request.user_id,
-            db_connection=None  # Replace with actual DB connection
-        )
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=402, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/crawl")
-async def crawl_channels(request: CrawlRequest):
-    """
-    Crawl content from selected channels
-    """
-    try:
-        result = await crawler_dispatcher.crawl_channels(
-            keyword=request.keyword,
-            community_channels=request.community_channels,
-            sns_channels=request.sns_channels
-        )
-        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -500,14 +512,7 @@ async def generate_brand_strategy(
 
 @app.get("/")
 async def root():
-    """
-    Root endpoint
-    """
-    return {
-        "message": "Welcome to Intrix API",
-        "version": "1.0.0",
-        "status": "operational"
-    }
+    return {"message": "Welcome to Intrix API"}
 
 @app.get("/get-analysis/{analysis_id}")
 async def get_analysis(analysis_id: str):
@@ -1198,3 +1203,109 @@ async def api_access_strategy(
             status_code=500,
             detail="전략 생성 중 오류가 발생했습니다"
         )
+
+@app.post("/test-analysis", response_model=TestAnalysisResponse)
+async def test_analysis(request: TestAnalysisRequest):
+    try:
+        # Initialize services
+        scraper = RedditScraper()
+        claude = ClaudeCaller()
+        gpt = GPTCaller()
+        
+        # 1. Scrape Reddit
+        scraped_texts = await scraper.scrape(request.keyword)
+        combined_text = "\n\n".join(scraped_texts)
+        
+        # 2. Analyze with Claude
+        analysis_prompt = f"""
+        Analyze the following Reddit posts about {request.keyword}:
+        {combined_text}
+        
+        Provide insights about:
+        1. Main topics discussed
+        2. Sentiment analysis
+        3. Key points and arguments
+        4. Potential opportunities
+        """
+        
+        analysis_result = await claude.call(
+            prompt=analysis_prompt,
+            system="You are an expert analyst specializing in social media content analysis."
+        )
+        
+        # 3. Generate strategy with GPT
+        strategy_prompt = f"""
+        Based on the following analysis of {request.keyword}:
+        {analysis_result['content']}
+        
+        Create a marketing strategy that includes:
+        1. Target audience
+        2. Key messages
+        3. Channel recommendations
+        4. Implementation timeline
+        """
+        
+        strategy_result = await gpt.call(
+            prompt=strategy_prompt,
+            system="You are a marketing strategy expert."
+        )
+        
+        # 4. Format with Claude
+        format_prompt = f"""
+        Format the following strategy into a clear, structured report:
+        {strategy_result['content']}
+        
+        Include:
+        1. Executive summary
+        2. Detailed recommendations
+        3. Action items
+        4. Success metrics
+        """
+        
+        formatted_result = await claude.call(
+            prompt=format_prompt,
+            system="You are a professional report formatter."
+        )
+        
+        return TestAnalysisResponse(
+            analysis=json.loads(analysis_result['content']),
+            strategy=json.loads(strategy_result['content']),
+            formatted=json.loads(formatted_result['content'])
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    openapi_schema = get_openapi(
+        title="Intrix API",
+        version="1.0.0",
+        description="Intrix API Documentation",
+        routes=app.routes,
+    )
+    
+    # Add example for crawl endpoint
+    openapi_schema["paths"]["/api/crawl"]["post"]["requestBody"] = {
+        "content": {
+            "application/json": {
+                "example": {
+                    "user_id": "u001",
+                    "input_text": "청년 정치의 방향성",
+                    "channels": ["reddit", "dcinside"]
+                }
+            }
+        }
+    }
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
+
+# Register global error handler
+@app.exception_handler(Exception)
+async def catch_all_exceptions(request: Request, exc: Exception):
+    return await global_error_handler(request, exc)

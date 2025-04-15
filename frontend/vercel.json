@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://your-railway-api-url/api/$1"
+    }
+  ]
+} 
