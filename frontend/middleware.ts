@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export const runtime = 'edge';
+
+export default function middleware(request: NextRequest) {
   const session = request.cookies.get("next-auth.session-token");
   
   if (!session) {
-    const url = new URL("/login", request.url);
-    url.searchParams.set("callbackUrl", request.url);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
