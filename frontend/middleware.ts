@@ -1,10 +1,5 @@
-import { withAuth } from "next-auth/middleware";
-
-export default withAuth({
-  pages: {
-    signIn: "/login",
-  },
-});
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export const config = {
   matcher: [
@@ -13,4 +8,15 @@ export const config = {
     "/api/analyze/:path*",
     "/api/mypage/:path*"
   ]
-}; 
+};
+
+export default function middleware(request: NextRequest) {
+  const session = request.cookies.get("next-auth.session-token");
+  
+  if (!session) {
+    const url = new URL("/login", request.url);
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+} 
