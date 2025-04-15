@@ -1,10 +1,10 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import type { ComponentType } from "react";
+import type { ComponentType, FC } from "react";
 
-export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
-  const WithAuthComponent: React.FC<P> = (props) => {
+export function withAuth<P extends object>(Component: ComponentType<P>): FC<P> {
+  const WithAuthComponent: FC<P> = (props) => {
     const { data: session, status } = useSession();
     const router = useRouter();
 
@@ -24,10 +24,10 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
       return null;
     }
 
-    return <WrappedComponent {...props} />;
+    return <Component {...props} />;
   };
 
-  WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
+  WithAuthComponent.displayName = `withAuth(${Component.displayName || Component.name || "Component"})`;
 
   return WithAuthComponent;
 }
