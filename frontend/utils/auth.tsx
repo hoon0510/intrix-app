@@ -30,4 +30,16 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
   WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return WithAuthComponent;
-} 
+}
+
+export const requireAuth = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  
+  if (!session) {
+    router.replace("/login");
+    return false;
+  }
+  
+  return true;
+}; 
