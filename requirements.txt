@@ -1,9 +1,8 @@
 fastapi
 uvicorn[standard]
-openai>=1.0.0
-anthropic>=0.5.0
-httpx
 jinja2
-python-dotenv>=1.0.0
-weasyprint
-uvicorn[standard]
+python-dotenv
+openai
+anthropic
+sqlalchemy
+psycopg2-binary
