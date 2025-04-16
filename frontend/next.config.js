@@ -8,8 +8,6 @@ const nextConfig = {
     },
     appDir: true
   },
-  // Force App Router
-  useFileSystemPublicRoutes: false,
   pageExtensions: ['tsx', 'ts', 'jsx', 'js']
 };
 
