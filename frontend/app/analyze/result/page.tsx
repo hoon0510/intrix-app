@@ -1,6 +1,7 @@
 "use client";
 
 import Layout from "@/components/layout";
+import StrategySlogan from "@/components/StrategySlogan";
 
 export default function AnalyzeResultPage() {
   const dummyStrategy = {
@@ -21,12 +22,7 @@ export default function AnalyzeResultPage() {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4">{dummyStrategy.title}</h2>
           <p className="mb-6 text-gray-700 leading-relaxed">{dummyStrategy.summary}</p>
-          <h3 className="text-xl font-semibold mb-2">추천 카피라이팅</h3>
-          <ul className="list-disc list-inside text-gray-800 space-y-2">
-            {dummyStrategy.slogans.map((slogan, index) => (
-              <li key={index}>{slogan}</li>
-            ))}
-          </ul>
+          <StrategySlogan slogans={dummyStrategy.slogans} />
         </div>
       </div>
     </Layout>
