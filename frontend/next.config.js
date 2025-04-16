@@ -8,6 +8,14 @@ const nextConfig = {
     domains: [],
   },
   transpilePackages: ['recharts'],
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://intrix-app-production.up.railway.app/api/:path*',
+      },
+    ];
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
