@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ChevronDown, ChevronUp, Star, Eye, Trash2 } from "lucide-react";
-import { FavoriteItem } from "@/types/favorite";
-import AnalysisResult from "@/components/AnalysisResult";
+import { FavoriteItem } from "../types/favorite";
+import AnalysisResult from "./AnalysisResult";
 
 export default function FavoriteList() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);

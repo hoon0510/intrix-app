@@ -17,14 +17,19 @@
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": ["./*"],
-      "@/api/*": ["./api/*"],
-      "@/app/*": ["./app/*"]
-    },
-    "baseUrl": "."
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "app/**/*.ts",
+    "app/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 } 
