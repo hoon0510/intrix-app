@@ -2,6 +2,7 @@
 
 import Layout from "@/components/layout";
 import StrategySlogan from "@/components/StrategySlogan";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AnalyzeResultPage() {
   const dummyStrategy = {
@@ -33,6 +34,17 @@ export default function AnalyzeResultPage() {
           <h2 className="text-2xl font-semibold mb-4">{dummyStrategy.title}</h2>
           <p className="mb-6 text-gray-700 leading-relaxed">{dummyStrategy.summary}</p>
           <StrategySlogan slogans={dummyStrategy.slogans} />
+          
+          <Card className="bg-gray-50 border border-gray-200 shadow-sm mt-6">
+            <CardHeader>
+              <CardTitle>감정 흐름 요약</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-gray-700">
+              <p><strong>1차 감정:</strong> 기대 → 안정</p>
+              <p><strong>주요 욕구:</strong> 신뢰, 기능성, 장기적 가치</p>
+              <p><strong>전환 메커니즘:</strong> 기술 → 감정 안정 → 일관성</p>
+            </CardContent>
+          </Card>
           
           <div className="flex space-x-4 mt-6">
             <button 
