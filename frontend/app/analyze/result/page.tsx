@@ -71,6 +71,14 @@ export default function AnalyzeResultPage() {
               공유 링크 복사
             </button>
           </div>
+
+          <div className="text-xs text-center text-gray-500 mt-10 mb-4 px-4">
+            <hr className="my-4 border-gray-300" />
+            <p>
+              전략 자동화 책임 안내<br />
+              Intrix는 고객의 감정과 욕구 분석을 기반으로 전략과 카피를 자동 생성합니다. 저희 시스템은 데이터 기반 인사이트를 제공하지만, 그 결과에 대한 가치 판단은 하지 않습니다. 제안된 전략의 윤리적 적합성과 실행 여부는 전적으로 이용자의 판단에 달려 있습니다. Intrix는 전략 자동화를 위한 도구로서, 최종 결정과 그에 따른 윤리적 책임은 사용자에게 있음을 안내드립니다.
+            </p>
+          </div>
         </div>
       </div>
     </Layout>
