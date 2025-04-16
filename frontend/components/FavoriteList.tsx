@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { StarIcon } from "@heroicons/react/24/solid";
+import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { FavoriteItem } from "../types/favorite";
 import AnalysisResult from "./AnalysisResult";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function FavoriteList() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
