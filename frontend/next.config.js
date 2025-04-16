@@ -2,9 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverActions: {
-      enabled: true
-    }
+    serverActions: true
   },
   pageExtensions: ['tsx', 'ts', 'jsx', 'js']
 };
