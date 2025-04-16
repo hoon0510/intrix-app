@@ -15,6 +15,16 @@ export default function AnalyzeResultPage() {
     ],
   };
 
+  // TODO: PDF 다운로드 기능 연동 (Claude 포맷 결과 기반)
+  const handleDownload = () => {
+    console.log("Download PDF");
+  };
+
+  // TODO: 공유 링크 생성 기능 연동 (history_id 기반 URL)
+  const handleShare = () => {
+    console.log("Copy share link");
+  };
+
   return (
     <Layout>
       <div className="max-w-3xl mx-auto mt-20 px-6">
@@ -23,6 +33,21 @@ export default function AnalyzeResultPage() {
           <h2 className="text-2xl font-semibold mb-4">{dummyStrategy.title}</h2>
           <p className="mb-6 text-gray-700 leading-relaxed">{dummyStrategy.summary}</p>
           <StrategySlogan slogans={dummyStrategy.slogans} />
+          
+          <div className="flex space-x-4 mt-6">
+            <button 
+              onClick={handleDownload}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              전략 PDF 다운로드
+            </button>
+            <button 
+              onClick={handleShare}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              공유 링크 복사
+            </button>
+          </div>
         </div>
       </div>
     </Layout>
