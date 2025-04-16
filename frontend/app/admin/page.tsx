@@ -30,7 +30,7 @@ export default function AdminPage() {
       setError(null);
       
       try {
-        const response = await fetch("/api/admin/stats");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/stats`);
         const result: ApiResponse = await response.json();
         
         if (!response.ok || result.status !== "ok") {

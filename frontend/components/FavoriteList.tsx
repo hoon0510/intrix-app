@@ -23,7 +23,7 @@ export default function FavoriteList() {
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch("/api/favorites");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/favorites`);
       if (!response.ok) {
         throw new Error("Failed to fetch favorites");
       }
@@ -42,7 +42,7 @@ export default function FavoriteList() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/favorites/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/favorites/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
