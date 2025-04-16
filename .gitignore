@@ -44,6 +44,6 @@ coverage.xml
 logs/
 
 # Duplicated legacy directories (only if moved to frontend/)
-components/
-app/
-types/
+/legacy/components/
+/legacy/app/
+/legacy/types/
