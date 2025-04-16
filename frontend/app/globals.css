@@ -24,8 +24,7 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: #ffffff;
+  @apply antialiased bg-white text-gray-900;
 }
 
 a {
