@@ -42,8 +42,3 @@ Thumbs.db
 htmlcov/
 coverage.xml
 logs/
-
-# Duplicated legacy directories (only if moved to frontend/)
-/legacy/components/
-/legacy/app/
-/legacy/types/
