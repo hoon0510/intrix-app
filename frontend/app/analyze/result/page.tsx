@@ -45,6 +45,17 @@ export default function AnalyzeResultPage() {
               <p><strong>전환 메커니즘:</strong> 기술 → 감정 안정 → 일관성</p>
             </CardContent>
           </Card>
+
+          <Card className="bg-white border border-gray-200 shadow-md mt-6">
+            <CardHeader>
+              <CardTitle>브랜딩 확장 전략</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-gray-700 space-y-2">
+              <p><strong>기존 인식 (Reference Point):</strong> 기술적 혁신 = 복잡함</p>
+              <p><strong>프레임 전환 전략:</strong> '혁신'보다 '신뢰'를 중심 가치로 재정의</p>
+              <p><strong>포지셔닝 문장:</strong> "진화는 조용히, 신뢰는 강하게."</p>
+            </CardContent>
+          </Card>
           
           <div className="flex space-x-4 mt-6">
             <button 
