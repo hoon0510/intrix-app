@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ChevronDown, ChevronUp, Star } from "lucide-react";
-import { FavoriteItem } from "../types/favorite";
-import AnalysisResult from "./AnalysisResult";
+import { ChevronDown, ChevronUp, Star, Eye, Trash2 } from "lucide-react";
+import { FavoriteItem } from "@/types/favorite";
+import AnalysisResult from "@/components/AnalysisResult";
 
 export default function FavoriteList() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
@@ -98,19 +98,7 @@ export default function FavoriteList() {
   if (favorites.length === 0) {
     return (
       <div className="text-center text-gray-500">
-        <svg
-          className="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-          />
-        </svg>
+        <Star className="mx-auto h-12 w-12 text-gray-400" />
         <p className="mt-2">No favorites yet</p>
       </div>
     );
@@ -124,7 +112,7 @@ export default function FavoriteList() {
           className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
         >
           <div className="flex justify-between items-start">
-            <div>
+            <div className="flex-1">
               <h3 className="text-lg font-semibold">{favorite.input_text}</h3>
               <p className="text-sm text-gray-400 mt-2">
                 {new Date(favorite.created_at).toLocaleDateString()}
@@ -133,18 +121,41 @@ export default function FavoriteList() {
             <div className="flex space-x-2">
               <button
                 onClick={() => handleItemClick(favorite)}
-                className="text-blue-600 hover:text-blue-800"
+                className="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
+                title="View"
               >
-                View
+                <Eye className="h-5 w-5" />
               </button>
               <button
                 onClick={() => handleDelete(favorite.id)}
-                className="text-red-600 hover:text-red-800"
+                className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50"
+                title="Delete"
               >
-                Delete
+                <Trash2 className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => toggleExpand(favorite.id)}
+                className="text-gray-600 hover:text-gray-800 p-2 rounded-full hover:bg-gray-50"
+                title={expandedItems.has(favorite.id) ? "Collapse" : "Expand"}
+              >
+                {expandedItems.has(favorite.id) ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
+          {expandedItems.has(favorite.id) && (
+            <div className="mt-4">
+              <AnalysisResult
+                analysisId={favorite.analysis_id}
+                inputText={favorite.input_text}
+                result={favorite.result_json ? JSON.parse(favorite.result_json) : undefined}
+                className="mt-4"
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>
