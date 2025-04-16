@@ -14,12 +14,11 @@ const nextConfig = {
   },
   experimental: {
     serverActions: true,
+    appDir: true
   },
   // Force App Router
   useFileSystemPublicRoutes: false,
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
-  // Disable Pages Router
-  pages: false
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js']
 };
 
 module.exports = nextConfig; 
