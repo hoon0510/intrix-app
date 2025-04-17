@@ -1,1 +1,1 @@
-web: cd frontend && npm install && npm run build && npm run start & cd backend && pip install -r requirements.txt && python main.py 
+web: nginx -c $PWD/nginx/nginx.conf & cd frontend && npm install && npm run build && npm run start & cd backend && pip install -r requirements.txt && python main.py 
