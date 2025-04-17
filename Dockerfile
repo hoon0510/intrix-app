@@ -9,11 +9,10 @@
     RUN pnpm build
     
     # ---- 2. Base Python for FastAPI ----
-    FROM python:3.10 AS backend-builder
-    WORKDIR /app/backend
-    COPY backend/requirements.txt ../
-    RUN pip install --no-cache-dir -r ../requirements.txt
-    COPY backend .
+    FROM python:3.10-slim
+    WORKDIR /app
+    COPY . .
+    RUN pip install -r requirements.txt
     
     # ---- 3. Final Merge Layer ----
     FROM ubuntu:22.04
