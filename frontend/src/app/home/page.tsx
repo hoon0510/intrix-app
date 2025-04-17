@@ -18,20 +18,25 @@ export default function Home() {
 
     try {
       const formData = new FormData(e.target as HTMLFormElement);
-      const response = await fetch("/api/analyze", {
+      const payload = {
+        keyword: formData.get("keyword"),
+        context: formData.get("context"),
+        channels: ["reddit"], // 기본 채널 값, 필요 시 다중 선택으로 확장
+      };
+
+      const response = await fetch("/api/analysis", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error("분석 요청 실패");
-      }
+      if (!response.ok) throw new Error("분석 요청 실패");
 
       const data = await response.json();
-      router.push(`/result/${data.id}`);
+      router.push(`/result/${data.job_id}`);
     } catch (error) {
       console.error("Error:", error);
-      alert("분석 중 오류가 발생했습니다. 다시 시도해주세요.");
+      alert("분석 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +68,7 @@ export default function Home() {
             />
           </div>
 
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? "분석 중..." : "분석 시작"}
           </Button>
         </form>
