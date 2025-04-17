@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/Footer";
 import { ReactNode } from "react";
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={inter.className}>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </div>
+      <body className="min-h-screen flex flex-col pt-16">
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );
