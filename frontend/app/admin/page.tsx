@@ -1,144 +1,130 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-interface Stats {
-  total_requests: number;
-  total_credits: number;
-  recent_activity: Array<{
-    date: string;
-    count: number;
-  }>;
-}
-
-interface ApiResponse {
-  status: string;
-  data?: Stats;
-  error?: string;
+interface User {
+  email: string;
+  credit: number;
+  id: string;
 }
 
 export default function AdminPage() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const [users, setUsers] = useState<User[]>([]);
+  const [editing, setEditing] = useState<Record<string, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [updating, setUpdating] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    const fetchStats = async () => {
-      setIsLoading(true);
-      setError(null);
-      
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    } else if (session?.user?.email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+      router.replace("/");
+    }
+  }, [status, session, router]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/stats`);
-        const result: ApiResponse = await response.json();
-        
-        if (!response.ok || result.status !== "ok") {
-          throw new Error(result.error || "통계 데이터를 불러오는데 실패했습니다.");
-        }
-        
-        if (!result.data) {
-          throw new Error("데이터가 없습니다.");
-        }
-        
-        setStats(result.data);
-      } catch (err) {
-        console.error("Admin stats fetch error:", err);
-        setError(err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.");
+        const res = await fetch("/api/admin/users");
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        alert("사용자 목록을 불러오는데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchStats();
+    fetchUsers();
   }, []);
 
-  if (isLoading) {
+  const handleChange = (id: string, value: string) => {
+    setEditing((prev) => ({ ...prev, [id]: parseInt(value) || 0 }));
+  };
+
+  const applyUpdate = async (id: string) => {
+    setUpdating((prev) => ({ ...prev, [id]: true }));
+    try {
+      const res = await fetch(`/api/admin/users/${id}/credit`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credit: editing[id] }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update credit");
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === id ? { ...u, credit: editing[id] } : u
+        )
+      );
+      alert("크레딧이 업데이트되었습니다.");
+    } catch (error) {
+      console.error("Error updating credit:", error);
+      alert("크레딧 업데이트에 실패했습니다.");
+    } finally {
+      setUpdating((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+  if (status === "loading" || isLoading) {
     return (
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="flex items-center space-x-2">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500" />
-          <p className="text-sm text-gray-400">데이터를 불러오는 중...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-          <p className="text-red-500 font-medium">오류 발생</p>
-          <p className="text-sm text-red-600 mt-1">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-2 text-sm text-red-600 hover:text-red-700"
-          >
-            다시 시도
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!stats) {
-    return (
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
-          <p className="text-gray-500">데이터가 없습니다.</p>
-        </div>
-      </div>
-    );
+  if (!session || session.user?.email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+    return null;
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">Admin 대시보드</h1>
-        <button
-          onClick={() => router.push("/")}
-          className="text-sm text-gray-500 hover:text-gray-700"
-        >
-          메인으로 돌아가기
-        </button>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 border rounded-xl bg-white shadow-sm">
-          <p className="text-gray-500 text-sm">전체 요청 수</p>
-          <p className="text-2xl font-bold mt-2">{stats.total_requests.toLocaleString()}</p>
-        </div>
-        <div className="p-4 border rounded-xl bg-white shadow-sm">
-          <p className="text-gray-500 text-sm">총 크레딧 사용</p>
-          <p className="text-2xl font-bold mt-2">{stats.total_credits.toLocaleString()}</p>
-        </div>
-      </div>
-
-      <div className="p-4 border rounded-xl bg-white shadow-sm">
-        <h2 className="text-sm font-semibold mb-4">최근 7일 요청 수</h2>
-        <div className="space-y-3">
-          {stats.recent_activity.length === 0 ? (
-            <p className="text-sm text-gray-500">최근 요청 데이터가 없습니다.</p>
-          ) : (
-            stats.recent_activity.map((day) => (
-              <div key={day.date} className="flex items-center">
-                <span className="w-32 text-gray-600">{day.date}</span>
-                <div className="flex-1">
-                  <div className="h-4 bg-blue-100 rounded-full">
-                    <div
-                      className="h-full bg-blue-500 rounded-full"
-                      style={{
-                        width: `${(day.count / Math.max(...stats.recent_activity.map(d => d.count))) * 100}%`
-                      }}
-                    />
-                  </div>
-                </div>
-                <span className="w-16 text-right text-sm font-medium">
-                  {day.count.toLocaleString()}회
-                </span>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">관리자 페이지</h1>
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold mb-4">사용자 관리</h2>
+        <div className="space-y-4">
+          {users.map((u) => (
+            <div
+              key={u.id}
+              className="border rounded p-4 flex items-center justify-between bg-white dark:bg-neutral-800"
+            >
+              <div>
+                <p className="font-medium">{u.email}</p>
+                <p className="text-sm text-gray-500">현재 크레딧: {u.credit}</p>
               </div>
-            ))
-          )}
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  defaultValue={u.credit}
+                  onChange={(e) => handleChange(u.id, e.target.value)}
+                  className="w-24"
+                  min="0"
+                />
+                <Button
+                  size="sm"
+                  onClick={() => applyUpdate(u.id)}
+                  disabled={updating[u.id]}
+                >
+                  {updating[u.id] ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "업데이트"
+                  )}
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
