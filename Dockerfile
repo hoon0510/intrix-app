@@ -6,7 +6,7 @@ WORKDIR /app/frontend
 
 # Install dependencies first (better caching)
 COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci --only=production
+RUN npm install --force
 
 # Copy source files
 COPY frontend .
