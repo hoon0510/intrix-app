@@ -3,6 +3,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api import router
 from dotenv import load_dotenv
+from models.user import Base
+from database import engine
+
+# 데이터베이스 테이블 생성
+Base.metadata.create_all(bind=engine)
 
 load_dotenv()
 
