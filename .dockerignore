@@ -1,8 +1,30 @@
-.git
-.gitignore
-.env
+# 환경파일
+.env.local
+.env.secret
+.env.*
+
+# 빌드 산출물
+node_modules
+.next
 __pycache__
 *.pyc
+*.pyo
+*.pyd
+*.db
+
+# 에디터/IDE
+.vscode
+.idea
+.DS_Store
+
+# Git
+.git
+.gitignore
+
+# 기타
+*.log
+*.bak
+
 venv/
 .venv/
 .pytest_cache/
