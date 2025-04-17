@@ -3,10 +3,10 @@
 # ---- 1. Base Node.js for Next.js Build ----
 FROM node:18-alpine AS frontend-builder
 WORKDIR /app/frontend
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
 COPY frontend .
-RUN pnpm build
+RUN npm run build
 
 # ---- 2. Base Python for FastAPI ----
 FROM python:3.10-alpine AS backend-builder
