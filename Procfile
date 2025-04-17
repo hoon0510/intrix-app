@@ -1,2 +1,1 @@
-web: cd frontend && pnpm install && pnpm build && pnpm start &
-     cd backend && pip install -r ../requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000 
+web: cd backend && pip install -r ../requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000 
