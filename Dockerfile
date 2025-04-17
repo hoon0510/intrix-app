@@ -3,9 +3,19 @@
 # ---- 1. Base Node.js for Next.js Build ----
 FROM node:18-alpine AS frontend-builder
 WORKDIR /app/frontend
+
+# Install dependencies
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
+
+# Copy source files
 COPY frontend .
+
+# Set environment variables for production build
+ENV NEXT_PUBLIC_API_URL=https://api.intrix.app
+ENV NODE_ENV=production
+
+# Build the application
 RUN npm run build
 
 # ---- 2. Base Python for FastAPI ----
