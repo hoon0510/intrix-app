@@ -1,0 +1,11 @@
+{
+  "name": "intrix-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cd frontend && npm install && npm run build && npm run start"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 

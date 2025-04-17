@@ -1,1 +1,1 @@
-web: bash start.sh 
+web: cd frontend && npm install && npm run build && npm run start & cd backend && pip install -r requirements.txt && python main.py 
