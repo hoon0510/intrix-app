@@ -5,12 +5,13 @@ import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/Footer";
 import { ReactNode } from "react";
 import Header from "@/components/Header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Intrix - 전략 자동화 분석기",
-  description: "감정 기반 전략 자동화 도구 Intrix",
+  title: "Intrix - AI-Powered Brand Strategy",
+  description: "Transform your brand strategy with AI-powered insights",
 };
 
 export default function RootLayout({
@@ -19,11 +20,18 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="ko">
-      <body className="min-h-screen flex flex-col pt-16">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang="ko" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,0 +1,41 @@
+{
+  "buildCommand": "pnpm turbo run build --filter=frontend",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "ignoreCommand": "echo 'Always build'",
+  "regions": ["icn1"],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+    "OPENAI_API_KEY": "@openai_api_key",
+    "CLAUDE_API_KEY": "@claude_api_key"
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+} 

@@ -1,18 +1,39 @@
 import Link from "next/link";
+import { ThemeToggle } from "./theme-toggle";
 
-const Header = () => {
+export function Header() {
   return (
-    <header className="fixed top-0 w-full z-50 border-b bg-white/80 backdrop-blur-md text-sm">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="font-bold">INTRIX</div>
-        <nav className="space-x-4 text-gray-700">
-          <Link href="/home" className="hover:underline">홈</Link>
-          <Link href="/analyzer" className="hover:underline">분석</Link>
-          <Link href="/mypage" className="hover:underline">마이페이지</Link>
-        </nav>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 hidden md:flex">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <span className="hidden font-bold sm:inline-block">
+              Intrix
+            </span>
+          </Link>
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            <Link
+              href="/analyzer"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              분석하기
+            </Link>
+            <Link
+              href="/about"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              소개
+            </Link>
+          </nav>
+        </div>
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <nav className="flex items-center">
+            <ThemeToggle />
+          </nav>
+        </div>
       </div>
     </header>
   );
-};
+}
 
 export default Header; 
