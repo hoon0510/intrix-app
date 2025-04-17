@@ -1,35 +1,54 @@
-"use client";
+import { Metadata } from 'next'
 
-import React from "react";
-import Layout from "@/components/layout";
+export const metadata: Metadata = {
+  title: 'About - Intrix',
+  description: 'Discover how Intrix transforms emotional insights into powerful marketing strategies through AI-powered analysis.',
+}
 
 export default function AboutPage() {
   return (
-    <Layout>
-      <div className="min-h-screen px-6 py-12 bg-white text-gray-800">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-6">Intrix란?</h1>
-          <p className="text-lg mb-6">
-            Intrix는 무의식적 감정 흐름과 욕구 구조를 분석하여, 기존 마케팅 전략의 한계를 넘어서는 새로운 전략을 자동으로 생성하는 시스템입니다.
-          </p>
-          <h2 className="text-2xl font-semibold mb-4">왜 Intrix인가?</h2>
-          <ul className="list-disc pl-5 space-y-2 mb-6">
-            <li>전략가가 없어도 전략이 만들어집니다.</li>
-            <li>감정, 욕구, 실행을 하나의 파이프라인으로 연결합니다.</li>
-            <li>사용자의 무의식적 선택 흐름을 기반으로 설계되어 전환율을 극대화합니다.</li>
-          </ul>
-          <h2 className="text-2xl font-semibold mb-4">기술 기반</h2>
-          <p className="mb-6">
-            Claude 3.7 Sonnet과 GPT-4 모델을 병렬로 활용하며, 모든 전략 결과는 포맷팅 및 결과 분리를 통해 실행 가능한 보고서 형태로 제공됩니다.
-          </p>
-          <h2 className="text-2xl font-semibold mb-4">Intrix가 바꾸고자 하는 것</h2>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>감에 의존하는 마케팅이 아닌, 구조에 의한 전략을 만듭니다.</li>
-            <li>표면적인 분석이 아닌, 감정과 욕구의 흐름을 다층적으로 설계합니다.</li>
-            <li>누구나 전략가처럼 행동할 수 있는 환경을 제공합니다.</li>
-          </ul>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl mb-12">
+          Intrix란?
+        </h1>
+
+        <div className="prose prose-lg max-w-none space-y-12">
+          <section className="bg-white p-8 rounded-xl shadow-sm">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              📌 전략 자동화, 그 너머
+            </h2>
+            <p className="text-gray-600">
+              Intrix는 단순한 AI 분석 툴이 아닙니다. 감정과 욕구를 읽고, 전략을 설계하며, 행동을 유도하는 실전형 마케팅 자동화 시스템입니다.
+              단어 하나에도 전환의 흐름이 설계되고, 모든 전략은 정량화된 감정 데이터에서 출발합니다.
+            </p>
+          </section>
+
+          <section className="bg-white p-8 rounded-xl shadow-sm">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              🚀 Intrix의 핵심 기능
+            </h2>
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li>다층 감정 및 욕구 분석</li>
+              <li>자동 전략 기획안 및 브랜딩 생성</li>
+              <li>자극형 카피라이팅 출력</li>
+              <li>PDF 보고서 다운로드 및 즐겨찾기</li>
+              <li>Claude + GPT 병렬 구조 기반 고정된 전략 설계 흐름</li>
+            </ul>
+          </section>
+
+          <section className="bg-white p-8 rounded-xl shadow-sm">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              ⚙️ 무엇이 다른가?
+            </h2>
+            <p className="text-gray-600">
+              대부분의 AI 도구가 '요약'에 머무르는 반면, Intrix는 '전략'을 설계합니다.  
+              우리는 데이터 기반 마케터의 언어를 알고, 프레임 전환과 감정 유도 흐름을 시스템화합니다.
+              그리고 그 결과는 누구도 수정할 수 없습니다. 카피를 제외하고는.
+            </p>
+          </section>
         </div>
       </div>
-    </Layout>
-  );
+    </div>
+  )
 } 

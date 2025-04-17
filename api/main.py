@@ -199,6 +199,8 @@ app.include_router(export.router, prefix="/api", tags=["export"])
 app.include_router(execution.router, prefix="/api", tags=["execution"])
 app.include_router(admin.router, prefix="/api", tags=["admin"])
 app.include_router(credit_log.router, prefix="/api", tags=["credit"])
+app.include_router(analysis.router, prefix="/api")
+app.include_router(download.router, prefix="/api")
 
 # Request models
 class AnalyzeRequest(BaseModel):

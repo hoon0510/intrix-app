@@ -18,9 +18,14 @@ export default function AnalyzeProcessingPage() {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
-        <div className="text-2xl font-semibold">분석 중입니다...</div>
-        <div className="animate-pulse text-sm text-gray-500">AI가 감정과 욕구를 분석하고 있어요</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 px-4">
+        <h1 className="text-3xl font-semibold mb-6 text-center">🔍 분석을 진행 중입니다</h1>
+        <p className="text-gray-600 text-center mb-4">
+          감정, 욕구, 전략을 분석하는 중입니다. 잠시만 기다려 주세요...
+        </p>
+        <div className="w-48 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-full bg-blue-500 animate-pulse w-2/3"></div>
+        </div>
       </div>
     </Layout>
   );

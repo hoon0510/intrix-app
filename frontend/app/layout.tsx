@@ -1,16 +1,29 @@
-import "@/app/globals.css";
-import { ReactNode } from "react";
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import Navbar from "@/components/ui/navbar";
+import Footer from "@/components/layout/Footer";
 
-export const metadata = {
-  title: "Intrix | 본능을 읽는 전략",
-  description: "감정과 욕구 기반 전략 자동화 플랫폼",
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Intrix - 전략 자동화 분석기",
+  description: "감정 기반 전략 자동화 도구 Intrix",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ko">
-      <body className="bg-white text-gray-900">
-        {children}
+      <body className={inter.className}>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
