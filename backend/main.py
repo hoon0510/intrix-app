@@ -29,6 +29,15 @@ app.add_middleware(
 # API 라우터 등록
 app.include_router(router, prefix="/api")
 
+@app.get("/")
+async def root():
+    return {
+        "status": "ok",
+        "message": "Welcome to Intrix API",
+        "version": "1.0.0",
+        "docs_url": "/docs"
+    }
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
