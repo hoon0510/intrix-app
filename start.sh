@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
-# 1. Start FastAPI on 8001
-cd /var/www/backend
-PYTHONPATH=. uvicorn main:app --host 0.0.0.0 --port 8001 &
+# Create necessary directories
+mkdir -p /var/log/nginx
+mkdir -p /var/log/fastapi
+mkdir -p /var/www/frontend/.next/cache
 
-# 2. Start Next.js on 3000
-cd /var/www/frontend
-pnpm install
-pnpm start &
+# Set proper permissions
+chown -R nobody:nobody /var/www
+chown -R nobody:nobody /var/log
 
-# 3. Start nginx on 8000
-nginx -g 'daemon off;' 
+# Start supervisor
+exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf 
