@@ -1,8 +1,16 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import admin
+from api import router
+from dotenv import load_dotenv
 
-app = FastAPI()
+load_dotenv()
+
+app = FastAPI(
+    title="Intrix API",
+    description="AI-powered brand strategy analysis API",
+    version="1.0.0"
+)
 
 # CORS 설정
 app.add_middleware(
@@ -13,9 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 라우터 등록
-app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
+# API 라우터 등록
+app.include_router(router, prefix="/api")
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to Intrix API"} 
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port) 
