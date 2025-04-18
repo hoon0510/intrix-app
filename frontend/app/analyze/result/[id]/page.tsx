@@ -1,35 +1,81 @@
-import type { Metadata } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { notFound, redirect } from "next/navigation";
+"use client";
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  return {
-    title: `Intrix 전략 리포트 – ${params.id}`,
-    description: "Intrix 분석 결과 리포트",
-    openGraph: {
-      title: `Intrix 전략 리포트`,
-      description: "AI 분석 기반 브랜드 전략 결과",
-      images: ["https://your-intrix-domain.com/og-default.png"],
-    },
-  };
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import AuthGuard from "@/components/auth/AuthGuard";
+
+interface AnalysisResult {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
 }
 
-export default async function ResultPage({ params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
+export default function Page() {
+  const params = useParams();
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!session) {
-    return redirect("/login");
+  useEffect(() => {
+    fetchResult();
+  }, [params.id]);
+
+  const fetchResult = async () => {
+    try {
+      const response = await fetch(`/api/analyze/${params.id}`);
+      if (!response.ok) throw new Error("Failed to fetch analysis result");
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      toast.error("Failed to load analysis result");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
-  // 이후 기존 분석 결과 렌더링 로직 진행
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">분석 결과</h1>
-      <div className="bg-white rounded-lg shadow p-6">
-        <p>분석 ID: {params.id}</p>
-        {/* 기존 분석 결과 렌더링 코드 */}
+  if (!result) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500">Analysis result not found</p>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <AuthGuard>
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>{result.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold">Analysis Content</h3>
+                <p className="whitespace-pre-wrap">{result.content}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Created At</h3>
+                <p>{new Date(result.createdAt).toLocaleString()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <div className="mt-4">
+          <Button onClick={() => window.history.back()}>Back</Button>
+        </div>
+      </div>
+    </AuthGuard>
   );
 } 

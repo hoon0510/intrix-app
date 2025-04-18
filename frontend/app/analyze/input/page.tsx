@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Layout from "@/components/layout";
+import Layout from "@/components/layout/Layout";
 
 export default function AnalyzeInputPage() {
   const [inputText, setInputText] = useState("");

@@ -1,45 +1,55 @@
 "use client";
 
-import React from "react";
-import Layout from "@/components/layout";
+import Layout from "@/components/layout/Layout";
 
 export default function PricingPage() {
   return (
     <Layout>
-      <div className="min-h-screen bg-white px-6 py-12 flex flex-col items-center">
-        <div className="max-w-3xl text-center">
-          <h1 className="text-3xl font-bold mb-4">요금제 안내</h1>
-          <p className="text-gray-700 mb-10">
-            Intrix는 크레딧 기반으로 요금이 부과되며, 사용량에 따라 합리적으로 결제할 수 있습니다.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="border rounded-xl p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-2">Lite</h2>
-              <p className="text-gray-600 mb-4">₩7,900 / 500크레딧</p>
-              <ul className="text-left text-gray-600 list-disc list-inside space-y-1 mb-4">
-                <li>전략 분석 1회</li>
-                <li>카피라이팅 포함</li>
-                <li>결과 저장 가능</li>
-              </ul>
-            </div>
-            <div className="border rounded-xl p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-2">Standard</h2>
-              <p className="text-gray-600 mb-4">₩29,900 / 2,000크레딧</p>
-              <ul className="text-left text-gray-600 list-disc list-inside space-y-1 mb-4">
-                <li>전략 분석 최대 7회</li>
-                <li>PDF/HTML 다운로드</li>
-                <li>즐겨찾기 기능 제공</li>
-              </ul>
-            </div>
-            <div className="border rounded-xl p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-2">Pro</h2>
-              <p className="text-gray-600 mb-4">₩119,900 / 10,000크레딧</p>
-              <ul className="text-left text-gray-600 list-disc list-inside space-y-1 mb-4">
-                <li>전략 분석 무제한</li>
-                <li>퍼포먼스 설계 보고서 포함</li>
-                <li>관리자 패널 기능</li>
-              </ul>
-            </div>
+      <div className="max-w-6xl mx-auto py-20 px-6">
+        <h1 className="text-4xl font-bold text-center mb-12">요금제 안내</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Free Plan */}
+          <div className="border rounded-lg p-8">
+            <h2 className="text-2xl font-semibold mb-4">Free</h2>
+            <p className="text-3xl font-bold mb-6">₩0</p>
+            <ul className="space-y-3 mb-8">
+              <li>• 기본 분석 기능</li>
+              <li>• 월 5회 무료 분석</li>
+              <li>• 기본 리포트 제공</li>
+            </ul>
+            <button className="w-full py-2 bg-gray-100 rounded hover:bg-gray-200">
+              시작하기
+            </button>
+          </div>
+
+          {/* Pro Plan */}
+          <div className="border rounded-lg p-8 bg-black text-white">
+            <h2 className="text-2xl font-semibold mb-4">Pro</h2>
+            <p className="text-3xl font-bold mb-6">₩29,900</p>
+            <ul className="space-y-3 mb-8">
+              <li>• 무제한 분석</li>
+              <li>• 상세 리포트 제공</li>
+              <li>• 우선 지원</li>
+              <li>• API 액세스</li>
+            </ul>
+            <button className="w-full py-2 bg-white text-black rounded hover:bg-gray-100">
+              업그레이드
+            </button>
+          </div>
+
+          {/* Enterprise Plan */}
+          <div className="border rounded-lg p-8">
+            <h2 className="text-2xl font-semibold mb-4">Enterprise</h2>
+            <p className="text-3xl font-bold mb-6">문의</p>
+            <ul className="space-y-3 mb-8">
+              <li>• 맞춤형 솔루션</li>
+              <li>• 전담 매니저</li>
+              <li>• SLA 보장</li>
+              <li>• 기술 지원</li>
+            </ul>
+            <button className="w-full py-2 bg-gray-100 rounded hover:bg-gray-200">
+              문의하기
+            </button>
           </div>
         </div>
       </div>

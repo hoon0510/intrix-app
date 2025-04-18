@@ -1,1 +1,2 @@
-web: nginx -c $PWD/nginx/nginx.conf & cd frontend && npm install && npm run build && npm run start & cd backend && pip install -r requirements.txt && python main.py 
+web: cd backend && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+release: cd backend && python -m alembic upgrade head 

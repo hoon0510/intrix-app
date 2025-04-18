@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import DownloadSection from "@/components/DownloadSection";
 import ResultRenderer from "@/components/ResultRenderer";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/ui/navbar";
 
 // 임시 데이터 - 실제로는 API에서 받아올 데이터
 const dummyResult = {

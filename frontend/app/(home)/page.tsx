@@ -1,6 +1,10 @@
+"use client";
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { dummyStrategy } from "@/lib/dummy";
+console.log("dummyStrategy:", dummyStrategy);
+
 
 export default function Home() {
   return (
